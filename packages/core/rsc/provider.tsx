@@ -17,6 +17,8 @@ import type {
   OnGetUIState,
 } from './types';
 
+export { type AIProvider } from './types'
+
 async function innerAction<T>(
   {
     action,

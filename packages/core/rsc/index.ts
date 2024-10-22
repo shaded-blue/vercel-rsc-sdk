@@ -17,4 +17,7 @@ export type {
   useSyncUIState,
 } from './rsc-client';
 
-export type { StreamableValue } from './types';
+export type {
+  AIProvider,
+  StreamableValue,
+} from './types';
