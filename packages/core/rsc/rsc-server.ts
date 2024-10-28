@@ -6,3 +6,4 @@ export {
 } from './streamable';
 export { streamUI } from './stream-ui';
 export { createAI } from './provider';
+export { testBindInitFunction } from './provider'

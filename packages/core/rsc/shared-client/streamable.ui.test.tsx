@@ -507,3 +507,15 @@ describe('rsc - readStreamableValue()', () => {
     });
   });
 });
+
+
+
+/*
+Awesome, let's do this!
+
+First, here is the stream-ui.ui.test.tsx, which is colocated with the stream-ui implementation.
+
+The two streamable.ui.test.tsx are located one next to streamable.tsx which defines createStreamableUI, etc., and the other is next to client/streamable.tsx, which defines readStreamableValue, and the various hooks like useActions, useAIState, useUIState, etc. 
+
+I will share them one at a time, as they are 200-500 lines each; here is the stream-ui test:
+*/

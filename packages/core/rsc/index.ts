@@ -6,6 +6,7 @@ export type {
   streamUI,
   render,
   createAI,
+  testBindInitFunction,
 } from './rsc-server';
 
 export type {

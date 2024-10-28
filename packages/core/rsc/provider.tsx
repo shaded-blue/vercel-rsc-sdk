@@ -48,6 +48,15 @@ function wrapAction<T = unknown>(
   return innerAction.bind(null, { action, options }) as AIAction<T>;
 }
 
+export function testBindInitFunction<Actions extends AIActions = {}>({ actions }: { actions: Actions }) {
+  console.log('Testing wrapAction!');
+  const wrappedActions: ServerWrappedActions = {};
+  for (const name in actions) {
+    wrappedActions[name] = wrapAction(actions[name], {});
+  }
+  // wrapAction(action, {});
+}
+
 export function createAI<
   AIState = any,
   UIState = any,

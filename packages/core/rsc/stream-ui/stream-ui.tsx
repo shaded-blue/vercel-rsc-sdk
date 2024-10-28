@@ -164,7 +164,7 @@ export async function streamUI<
       if ('render' in tool) {
         throw new Error(
           'Tool definition in `streamUI` should not have `render` property. Use `generate` instead. Found in tool: ' +
-            name,
+          name,
         );
       }
     }
@@ -183,17 +183,35 @@ export async function streamUI<
     res: ReturnType<typeof createStreamableUI>,
     lastCall = false,
   ) {
+
+
+    //  If no generator function passed, exit (what are we supposed to render..?)
     if (!renderer) return;
 
+
+    //  I believe createResolvable gives them their promise chaining
     const resolvable = createResolvablePromise<void>();
 
+
+    // Finished is defined right above handleRender.
     if (finished) {
       finished = finished.then(() => resolvable.promise);
     } else {
       finished = resolvable.promise;
     }
 
+
+    //  And here we go.
+    //  First, get result of our generator (which is yield/returning the componentry)
+    //  That's the 'value' in all the conditionals. 
     const value = renderer(...args);
+
+
+    // So, three routes based on shape of the generator it seems.  Not sure what each represents yet.
+
+
+    // Value is Object
+    // value has property 'then' === function
     if (
       value instanceof Promise ||
       (value &&
@@ -201,6 +219,7 @@ export async function streamUI<
         'then' in value &&
         typeof value.then === 'function')
     ) {
+      console.log('@handleRender => PROMISE.')
       const node = await (value as Promise<React.ReactNode>);
 
       if (lastCall) {
@@ -210,11 +229,19 @@ export async function streamUI<
       }
 
       resolvable.resolve(void 0);
+
+
+
+
+
+      // Value is object
+      // value has asyncIterator symbol.
     } else if (
       value &&
       typeof value === 'object' &&
       Symbol.asyncIterator in value
     ) {
+      console.log('@handleRender => ASYNC ITERATOR.')
       const it = value as AsyncGenerator<
         React.ReactNode,
         React.ReactNode,
@@ -230,7 +257,12 @@ export async function streamUI<
         if (done) break;
       }
       resolvable.resolve(void 0);
+
+
+      // Value is object
+      // value has iterator symbol
     } else if (value && typeof value === 'object' && Symbol.iterator in value) {
+      console.log('@handleRender => ITERATOR.')
       const it = value as Generator<React.ReactNode, React.ReactNode, void>;
       while (true) {
         const { done, value } = it.next();
@@ -242,7 +274,11 @@ export async function streamUI<
         if (done) break;
       }
       resolvable.resolve(void 0);
+
+
+      /// Fallback
     } else {
+      console.log('@handleRender => FALLBACK.')
       if (lastCall) {
         res.done(value);
       } else {
